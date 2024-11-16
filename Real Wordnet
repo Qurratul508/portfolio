@@ -1,0 +1,141 @@
+package main;
+
+import edu.princeton.cs.algs4.In;
+
+import java.util.*;
+
+
+public class WordNet {
+    private Graph graphica;
+    private TreeMap<String, TreeSet<String>> tree;
+    private TreeMap<String,String[]> tree2;
+
+    public WordNet(String synsetFile, String hyponymFile) {
+        graphica = new Graph();
+
+        In sysnet = new In(synsetFile);
+        In hyponym = new In(hyponymFile);
+
+        tree = new TreeMap<>();
+        tree2 = new TreeMap<>();
+
+        while (!sysnet.isEmpty() && sysnet.hasNextLine()) {
+            String[] array1 = sysnet.readLine().split(",");
+
+            String[] array2 = array1[1].split(" ");
+
+            for (String i : array2) {
+                TreeSet<String> direct;
+
+                if (tree.containsKey(i)) {
+                    direct = tree.get(i);
+                } else {
+                    direct = new TreeSet<>();
+                }
+                direct.add(array1[0]);
+                tree.put(i, direct);
+            }
+
+            tree2.put((array1[0]), array2);
+        }
+        //parse through
+        TreeMap<String, TreeSet<String>> syn2hyp = new TreeMap<>();
+        TreeSet<String> hyponymns;
+
+
+        while (!hyponym.isEmpty() && hyponym.hasNextLine()) {
+            String[] array1 = hyponym.readLine().split(",");;
+            if (syn2hyp.containsKey(array1[0])) {
+                hyponymns = syn2hyp.get(array1[0]);
+            } else {
+                hyponymns = new TreeSet<>();
+            }
+            hyponymns.addAll(Arrays.asList(array1).subList(1 , array1.length));
+            syn2hyp.put((array1[0]),hyponymns);
+        }
+
+
+        for (String i : syn2hyp.keySet()) {
+            if (syn2hyp.get(i) != null) {
+                TreeSet<String> sets = syn2hyp.get(i);
+                for (String s : sets) {
+                    graphica.edgeAdder(i, s);
+                }
+            }
+        }
+    }
+
+    public HashSet<String[]> hype(String k) {
+        HashSet<String[]> i = new HashSet<>();
+        if (tree.get(k) == null) {
+            return i;
+        }
+        TreeSet<String> occurance = tree.get(k);
+        TreeSet<String> ram = new TreeSet<>();
+
+
+
+        for (String id : occurance) {
+            ram.add(id);
+        }
+        HashSet<String> graphic;
+        graphic = graphica.neighborFinder(ram);
+        if (graphic == null) {
+            HashSet<String[]> san = new HashSet<>();
+            String[] zub;
+            zub = new String[]{"[]"};
+            san.add(zub);
+            return san;
+        }
+        for (String s : graphic) {
+            i.add(tree2.get(s));
+        }
+        return i;
+    }
+    public HashSet<String> hashy(List<String> k) {
+        ArrayList<TreeSet<String>> Arrayhouse = new ArrayList<>();
+        HashSet<String> setter = new HashSet<>();
+
+        for (String s : k) {
+            if (tree.get(s) == null) {
+                return setter;
+            }
+            Arrayhouse.add(tree.get(s));
+        }
+        if (Arrayhouse.isEmpty()) {
+            HashSet<String> Hashset1 = new HashSet<>();
+            return Hashset1;
+        }
+        HashSet<String> neighboredFinder1 = graphica.neighborFinder(Arrayhouse.get(0));
+
+        for (String i : neighboredFinder1) {
+            String[] StringArray = tree2.get(i);
+            Collections.addAll(setter, StringArray);
+        }
+
+
+
+        HashSet<String> dim  = new HashSet<>();
+        for (int i = 1; i < Arrayhouse.size(); i ++) {
+            if (!Arrayhouse.get(i).isEmpty()) {
+                dim = graphica.neighborFinder(Arrayhouse.get(i));
+                if (dim.isEmpty()) {
+                    continue;
+                }
+            } else {
+                continue;
+            }
+            List bon = new ArrayList();
+            for (String d : dim) {
+                String[] tree = tree2.get(d);
+                Collections.addAll(bon, tree);
+            }
+            setter.retainAll(bon);
+        }
+        if (setter.isEmpty()) {
+            return setter;
+        }
+        return setter;
+    }
+
+}
