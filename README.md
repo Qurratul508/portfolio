@@ -6,10 +6,9 @@ It is a game where you can find your bear instincts
 
 # Build Your Own World Design Document
 
-**Partner 1:**
+Designer:
 Qurratul Ain Sanjida
-**Partner 2:**
-Nicole Dayana Inga
+
 ## Classes and Data Structures
 
 
