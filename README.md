@@ -4,7 +4,7 @@ A Collection of Cool Things
 
 It is a game where you can find your bear instincts
 
-# Build Your Own World Design Document
+# World of Bears Design Document
 
 Designer:
 Qurratul Ain Sanjida
